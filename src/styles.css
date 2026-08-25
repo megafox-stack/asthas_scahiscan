@@ -411,3 +411,43 @@ body { background: var(--app-bg); color: var(--app-ink); }
   .voice-chat-btn { width: 100%; min-height: 44px; }
   .chat-form button { width: 100%; }
 }
+
+@media (min-width: 801px) {
+  .app-shell { width: 100%; margin: 0; box-shadow: none; }
+  .sidebar { display: flex; }
+  .main { margin-left: 232px; width: calc(100% - 232px); }
+  .mobile-nav { display: none; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; width: 100%; }
+  .mobile-nav {
+    position: fixed;
+    z-index: 6;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(560px, calc(100% - 20px));
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 2px;
+    padding: 5px;
+    border: 1px solid #d7e4dd;
+    border-radius: 15px;
+    background: rgba(255,255,255,.94);
+    box-shadow: 0 12px 35px rgba(23,43,58,.18);
+    backdrop-filter: blur(12px);
+  }
+  .mobile-nav .nav-item {
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+    padding: 7px 2px;
+    border-radius: 9px;
+    font-size: 9px;
+    white-space: nowrap;
+  }
+  .mobile-nav .nav-item span { width: auto; font-size: 16px; line-height: 1; }
+  .content { padding-bottom: 112px; }
+}

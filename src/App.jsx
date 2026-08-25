@@ -236,6 +236,8 @@ function App() {
           <NavItem icon="⌁" label={ui("scan", "Scan Product")} active={page === "scan"} onClick={() => { if (product) setPage("scan"); else scan(); }} />
           <NavItem icon="◉" label={ui("dart", "Loose Food · DART")} active={page === "dart"} onClick={() => setPage("dart")} />
           <NavItem icon="⚑" label={ui("reports", "Quality Reports")} active={page === "reports"} onClick={() => setPage("reports")} />
+          <NavItem icon="◎" label={ui("profiles", "Profiles")} active={page === "profiles"} onClick={() => setPage("profiles")} />
+          <NavItem icon="✦" label="SAHI-SAATH" active={page === "chat"} onClick={() => setPage("chat")} />
         </nav>
 
         <div className="sidebar-bottom">
@@ -323,6 +325,8 @@ function App() {
         <NavItem icon="⌁" label={ui("scan", "Scan")} active={page === "scan"} onClick={() => { if (product) setPage("scan"); else scan(); }} />
         <NavItem icon="◉" label={ui("dart", "DART")} active={page === "dart"} onClick={() => setPage("dart")} />
         <NavItem icon="⚑" label={ui("reports", "Reports")} active={page === "reports"} onClick={() => setPage("reports")} />
+        <NavItem icon="◎" label={ui("profiles", "Profiles")} active={page === "profiles"} onClick={() => setPage("profiles")} />
+        <NavItem icon="✦" label="Sahi-Saath" active={page === "chat"} onClick={() => setPage("chat")} />
       </nav>
 
       {selectedIngredient && (
