@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 
 const SUGAR_IMAGE = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160"><rect width="240" height="160" fill="#fff4d6"/><rect x="38" y="58" width="48" height="42" rx="5" fill="#fff" stroke="#dfc78d" stroke-width="3"/><rect x="96" y="42" width="52" height="48" rx="5" fill="#fff" stroke="#dfc78d" stroke-width="3"/><rect x="153" y="67" width="48" height="40" rx="5" fill="#fff" stroke="#dfc78d" stroke-width="3"/><path d="M43 63h38M101 47h42M158 72h38" stroke="#fff" stroke-width="5" opacity=".9"/></svg>`);
 const SALT_IMAGE = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160"><rect width="240" height="160" fill="#edf5f8"/><path d="M73 68h94l-9 64H82z" fill="#fff" stroke="#abc0c8" stroke-width="3"/><path d="M66 68h108l-12-18H78z" fill="#7fa2ae" stroke="#587d89" stroke-width="3"/><path d="M88 50h64l-7-25H95z" fill="#dbe8eb" stroke="#587d89" stroke-width="3"/><circle cx="106" cy="88" r="3" fill="#9ab3ba"/><circle cx="126" cy="104" r="3" fill="#9ab3ba"/><circle cx="144" cy="84" r="3" fill="#9ab3ba"/><circle cx="118" cy="121" r="3" fill="#9ab3ba"/></svg>`);
+const IMAGE_FALLBACK = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160"><rect width="240" height="160" fill="#eef3f0"/><rect x="58" y="38" width="124" height="84" rx="12" fill="#fff" stroke="#bfd1c8" stroke-width="4"/><path d="M82 101l24-25 18 18 16-14 24 21" fill="none" stroke="#7da594" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="100" cy="63" r="8" fill="#ef755f"/></svg>`);
 
 const PRODUCTS = {
   "8901234567890": {
@@ -198,7 +199,7 @@ function App() {
   };
 
   const speak = (text) => {
-    if (!("speechSynthesis" in window)) {
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
       setToast("Speech output is not supported in this browser.");
       return;
     }
@@ -482,7 +483,7 @@ function ScanPage({ product, scanning, profile, verdict, onScan, onScanAnother, 
         <div className="ingredient-list">
           {product.ingredients.map((item, i) => (
             <button key={i} className={`ingredient-tag ${item.type}`} onClick={() => onIngredient(item)}>
-              <img src={item.image} alt="" />
+              <img src={item.image || IMAGE_FALLBACK} alt="" onError={event => { event.currentTarget.onerror = null; event.currentTarget.src = IMAGE_FALLBACK; }} />
               <span className="ingredient-status"></span>
               <strong>{ingredientCopy.names[item.name] || item.name}</strong>
               <span className="ingredient-arrow">→</span>
@@ -669,7 +670,7 @@ function SahiSaathPage({ language, setLanguage, product, profile }) {
   };
 
   const speakReply = (text) => {
-    if (!("speechSynthesis" in window)) return;
+    if (!("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = SPEECH_LOCALES[language] || SPEECH_LOCALES.EN;
@@ -696,7 +697,12 @@ function SahiSaathPage({ language, setLanguage, product, profile }) {
       setMessages(current => [...current, { role: "user", text: spokenQuestion }, { role: "assistant", text: response }]);
       speakReply(response);
     };
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      setListening(false);
+      setMessages(current => [...current, { role: "assistant", text: "Voice input could not start. You can still type your question." }]);
+    }
   };
 
   return (
@@ -771,7 +777,12 @@ function VoiceModal({ onClose, onSpeak, product, profile }) {
         onSpeak("I can check a product, explain a flag, explain an ingredient, show alternatives, check loose food, or help file a report.");
       }
     };
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      setListening(false);
+      setHeard("Voice input could not start. You can still use the buttons or type instead.");
+    }
   };
 
   return (
